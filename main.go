@@ -9,22 +9,17 @@ import (
 
 func main() {
 	s := `{
-		"root": {
-			"baz": [
-				{
-					"qux": 
-					"quux"
-				}
-			],
-			"foo": "bar"
-		}
+		"root": [
+			{
+				"qux": "quux",
+				"foo": "bar"
+			}
+		]
 	}`
-	exists, err := excry.Exists(s, "foo")
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	exists, _ := excry.Exists(s, "foo")
 	fmt.Println(exists)
-	existsWithVal, err := excry.ExistsWithVal(s, "foo", "bar")
+	existsWithVal, err := excry.ExistsWithVal(s, "qux", "quux")
 	if err != nil {
 		log.Fatal(err)
 	}

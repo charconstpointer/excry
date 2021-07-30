@@ -24,7 +24,7 @@ func Exists(input, key string) (bool, error) {
 func ExistsWithVal(input, key, val string) (bool, error) {
 	res, err := find(input, key)
 	if err != nil {
-		return false, fmt.Errorf("invalid json input provided, %w", err)
+		return false, fmt.Errorf(": invalid json input provided, %w", err)
 	}
 	if !res.ok {
 		return false, nil
@@ -36,12 +36,23 @@ func ExistsWithVal(input, key, val string) (bool, error) {
 }
 
 func find(input, key string) (res, error) {
-	var j map[string]interface{}
+	var j interface{}
 	err := json.Unmarshal([]byte(input), &j)
 	if err != nil {
 		return res{}, fmt.Errorf("invalid json input provided, %w", err)
 	}
-	for k, v := range j {
+	switch v := j.(type) {
+	case map[string]interface{}:
+		return findObj(v, key)
+	case []interface{}:
+		return findInArray(v, key)
+	}
+	return res{}, fmt.Errorf("invalid json input provided, %w", err)
+
+}
+
+func findObj(data map[string]interface{}, key string) (res, error) {
+	for k, v := range data {
 		if k == key {
 			return res{
 				val: fmt.Sprintf("%s", v),
@@ -59,6 +70,20 @@ func find(input, key string) (res, error) {
 				ok:  true,
 			}, nil
 		}
+	}
+	return res{}, fmt.Errorf("key not found")
+}
+
+func findInArray(data []interface{}, key string) (res, error) {
+	for _, obj := range data {
+		res, err := findObj(obj.(map[string]interface{}), key)
+		if err != nil {
+			return res, err
+		}
+		if !res.ok {
+			continue
+		}
+		return res, nil
 	}
 	return res{}, fmt.Errorf("key not found")
 }

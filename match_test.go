@@ -34,6 +34,26 @@ func TestExists(t *testing.T) {
 			expected: true,
 			err:      false,
 		},
+		{
+			name: "retrieves key in a nested collection",
+			input: `{
+				"root": [
+					{
+						"notyet": {
+							"foo": "bar"
+						},
+						"deeper": [
+							{
+								"baz": "qux"
+							}
+						]
+					}
+				]
+			}`,
+			key:      "baz",
+			expected: true,
+			err:      false,
+		},
 	}
 	for _, tt := range tests {
 		exists, err := Exists(tt.input, tt.key)
@@ -77,6 +97,27 @@ func TestExistsWithVal(t *testing.T) {
 			input:    `{"root":{"notyet":{"foo":"baz"}}}`,
 			key:      "foo",
 			val:      "baz",
+			expected: true,
+			err:      false,
+		},
+		{
+			name: "retrieves key in a nested collection",
+			input: `{
+				"root": [
+					{
+						"notyet": {
+							"foo": "bar"
+						},
+						"deeper": [
+							{
+								"baz": "qux"
+							}
+						]
+					}
+				]
+			}`,
+			key:      "baz",
+			val:      "qux",
 			expected: true,
 			err:      false,
 		},

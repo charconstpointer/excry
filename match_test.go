@@ -54,6 +54,13 @@ func TestExists(t *testing.T) {
 			expected: true,
 			err:      false,
 		},
+		{
+			name:     "empty json",
+			input:    `{}`,
+			key:      "foo",
+			expected: false,
+			err:      true,
+		},
 	}
 	for _, tt := range tests {
 		exists, err := Exists(tt.input, tt.key)
@@ -120,6 +127,14 @@ func TestExistsWithVal(t *testing.T) {
 			val:      "qux",
 			expected: true,
 			err:      false,
+		},
+		{
+			name:     "empty json",
+			input:    `{}`,
+			key:      "foo",
+			val:      "",
+			expected: false,
+			err:      true,
 		},
 	}
 	for _, tt := range tests {
